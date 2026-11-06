@@ -14,3 +14,16 @@ CREATE TABLE teachers (     id BIGINT AUTO_INCREMENT PRIMARY KEY,     user_id BI
 CREATE TABLE subjects (     id BIGINT AUTO_INCREMENT PRIMARY KEY,     subject_code VARCHAR(20) NOT NULL UNIQUE,     subject_name VARCHAR(100) NOT NULL,     description TEXT NULL );
 
 CREATE TABLE academic_years (     id BIGINT AUTO_INCREMENT PRIMARY KEY,     year_name VARCHAR(20) NOT NULL UNIQUE,     is_active BOOLEAN NOT NULL DEFAULT FALSE );
+
+CREATE TABLE semesters (id BIGINT AUTO_INCREMENT PRIMARY KEY, academic_year_id BIGINT NOT NULL, semester_name ENUM('Ganjil', 'Genap') NOT NULL, is_active BOOLEAN NOT NULL DEFAULT FALSE, CONSTRAINT fk_semester_year FOREIGN KEY (academic_year_id) REFERENCES academic_years(id), UNIQUE (academic_year_id, semester_name));
+
+CREATE TABLE teacher_subjects (id BIGINT AUTO_INCREMENT PRIMARY KEY, teacher_id BIGINT NOT NULL, subject_id BIGINT NOT NULL, class_id BIGINT NOT NULL, semester_id BIGINT NOT NULL, CONSTRAINT fk_ts_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(id), CONSTRAINT fk_ts_subject FOREIGN KEY (subject_id) REFERENCES subjects(id), CONSTRAINT fk_ts_class FOREIGN KEY (class_id) REFERENCES classes(id), CONSTRAINT fk_ts_semester FOREIGN KEY (semester_id) REFERENCES semesters(id), UNIQUE (teacher_id, subject_id, class_id, semester_id));
+
+CREATE TABLE grades (id BIGINT AUTO_INCREMENT PRIMARY KEY, student_id BIGINT NOT NULL, teacher_subject_id BIGINT NOT NULL, score DECIMAL(5,2) NOT NULL, description VARCHAR(255) NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME NULL, CONSTRAINT fk_grade_student FOREIGN KEY (student_id) REFERENCES students(id), CONSTRAINT fk_grade_teacher_subject FOREIGN KEY (teacher_subject_id) REFERENCES teacher_subjects(id), CONSTRAINT chk_grade_score CHECK (score >= 0 AND score <= 100), UNIQUE (student_id, teacher_subject_id));
+
+CREATE TABLE audit_logs (id BIGINT AUTO_INCREMENT PRIMARY KEY, user_id BIGINT NULL, activity VARCHAR(100) NOT NULL, detail TEXT NULL, ip_address VARCHAR(45) NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, CONSTRAINT fk_audit_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL);
+
+CREATE INDEX idx_students_class ON students(class_id);
+CREATE INDEX idx_grades_student ON grades(student_id);
+CREATE INDEX idx_teacher_subjects_class ON teacher_subjects(class_id);
+CREATE INDEX idx_audit_created ON audit_logs(created_at);
