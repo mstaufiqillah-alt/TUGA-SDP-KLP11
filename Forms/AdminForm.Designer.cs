@@ -1,4 +1,4 @@
-﻿namespace dps.Forms
+namespace dps.Forms
 {
     partial class AdminForm
     {
@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "AdminForm";
+            components = new System.ComponentModel.Container();
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Name = "AdminForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "AdminForm";
         }
 
         #endregion
